@@ -1,0 +1,183 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usepackage{float}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\pgfplotsset{compat=1.17}
+
+\lstset{
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny,
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color{white},
+  frame=single,
+  tabsize=2,
+  showspaces=false,
+  showstringspaces=false
+}
+
+\sloppy
+
+\title{Análise Comparativa das Leis de Amdahl e de Gustafson na Programação Concorrente}
+
+\author{Felipe Barbosa Mourão}
+
+\address{Universidade da Região de Joinville (UNIVILLE)\\
+Joinville – SC – Brasil
+\email{felipemourao@univille.br}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+A eficiência da programação concorrente está diretamente associada à escalabilidade de sistemas paralelos. Este artigo explora as Leis de Amdahl e de Gustafson, fundamentais para a compreensão das limitações e possibilidades do paralelismo computacional. Com base em cenários reais e análises teóricas, confrontamos os modelos e discutimos suas aplicações práticas na engenharia de software, com foco em desempenho e dimensionamento de sistemas.
+\end{abstract}
+
+\begin{resumo}
+A eficiência da programação concorrente está diretamente associada à escalabilidade de sistemas paralelos. Este artigo explora as Leis de Amdahl e de Gustafson, fundamentais para a compreensão das limitações e possibilidades do paralelismo computacional. Com base em cenários reais e análises teóricas, confrontamos os modelos e discutimos suas aplicações práticas na engenharia de software, com foco em desempenho e dimensionamento de sistemas.
+\end{resumo}
+
+\section{Introdução}
+
+Com o avanço dos processadores multinúcleo e da computação paralela, compreender os limites e vantagens do paralelismo tornou-se essencial no desenvolvimento de software de alto desempenho. As Leis de Amdahl e de Gustafson surgem como dois modelos teóricos que buscam descrever o ganho de desempenho ao paralelizar tarefas. No entanto, apesar de tratarem do mesmo fenômeno, suas premissas e conclusões divergem significativamente.
+
+Este artigo tem como objetivo apresentar uma visão crítica e comparativa entre as duas leis, demonstrando, por meio de análises práticas, como elas influenciam as decisões no projeto e otimização de sistemas concorrentes.
+
+\section{Fundamentação Teórica}
+
+\subsection{Lei de Amdahl}
+
+Proposta por Gene Amdahl em 1967, a Lei de Amdahl afirma que o ganho máximo de desempenho de um programa paralelo é limitado pela fração que não pode ser paralelizada (Amdahl~\cite{amdahl1967}). A fórmula é dada por:
+
+\[
+S = \frac{1}{(1 - P) + \frac{P}{N}}
+\]
+
+Onde:
+\begin{itemize}
+  \item \( S \) é o speedup (aceleração),
+  \item \( P \) é a fração paralelizável,
+  \item \( N \) é o número de processadores.
+\end{itemize}
+
+\noindent Abaixo, o cálculo dessa fórmula em Python:
+
+\begin{lstlisting}[language=Python, caption={Cálculo da Lei de Amdahl em Python}]
+def amdahl_speedup(P, N):
+    return 1 / ((1 - P) + (P / N))
+
+# Exemplo: 95\% paralelizável, 8 processadores
+P = 0.95
+N = 8
+speedup = amdahl_speedup(P, N)
+print(f"Speedup (Amdahl): {speedup:.2f}")
+\end{lstlisting}
+
+Essa lei pressupõe um tamanho de problema fixo. Assim, mesmo com infinitos processadores, o ganho será limitado pela parte sequencial.
+
+\subsection{Lei de Gustafson}
+
+Em contraponto, Gustafson apresentou em 1988 uma alternativa mais otimista. A Lei de Gustafson assume que ao aumentar o número de processadores, podemos também aumentar proporcionalmente o tamanho do problema. Sua fórmula é:
+
+\[
+S = N - (1 - P) \cdot (N - 1)
+\]
+
+\noindent Onde:
+\begin{itemize}
+  \item \( S \) é o speedup estimado,
+  \item \( P \) é a fração paralelizável,
+  \item \( N \) é o número de processadores.
+\end{itemize}
+
+\noindent O cálculo pode ser feito facilmente em Python:
+
+\begin{lstlisting}[language=Python, caption={Cálculo da Lei de Gustafson em Python}]
+def gustafson_speedup(P, N):
+    return N - (1 - P) * (N - 1)
+
+# Exemplo: 95\% paralelizável, 8 processadores
+P = 0.95
+N = 8
+speedup = gustafson_speedup(P, N)
+print(f"Speedup (Gustafson): {speedup:.2f}")
+\end{lstlisting}
+
+A ideia central é que, em sistemas reais, problemas maiores são atribuídos a sistemas com mais núcleos, tornando o paralelismo mais vantajoso (Gustafson~\cite{gustafson1988}).
+
+\section{Metodologia}
+
+Para análise comparativa, simulamos diferentes cenários usando Python, variando:
+\begin{enumerate}
+  \item A fração paralelizável \( P \) de 0.5 a 0.99,
+  \item O número de processadores \( N \) de 1 a 64.
+\end{enumerate}
+
+Utilizamos scripts para plotar os gráficos de aceleração segundo as duas leis. As simulações foram feitas em um ambiente Linux com processador AMD Ryzen 5 5600H.
+
+\section{Resultados e Discussão}
+
+Os resultados obtidos mostram diferenças claras entre as previsões das duas leis.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{grafico_amdahl.png}
+  \caption{Aceleração pela Lei de Amdahl com \( P = 0.95 \)}
+  \label{fig:amdahl}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{grafico_gustafson.png}
+  \caption{Aceleração pela Lei de Gustafson com \( P = 0.95 \)}
+  \label{fig:gustafson}
+\end{figure}
+
+Na Figura~\ref{fig:amdahl}, observa-se que, mesmo com 64 núcleos, o speedup se estabiliza em torno de 20x. Já na Figura~\ref{fig:gustafson}, com o mesmo \( P \), o ganho cresce linearmente com \( N \), atingindo quase 60x com 64 núcleos.
+
+Essa diferença evidencia como a suposição de problema fixo (Amdahl~\cite{amdahl1967}) limita a escalabilidade, enquanto a de problema escalável (Gustafson~\cite{gustafson1988}) é mais realista para aplicações modernas, como processamento de big data, aprendizado de máquina ou renderização gráfica.
+
+\section{Aplicações na Programação Concorrente}
+
+Na prática, a Lei de Amdahl é útil para identificar gargalos intrínsecos, que não podem ser paralelizados, como I/O ou seções críticas de código (Tanenbaum~\cite{tanenbaum}). Já a Lei de Gustafson orienta arquiteturas escaláveis como MapReduce, GPUs e microsserviços, onde o problema pode crescer conforme o número de núcleos disponíveis.
+
+Para um estudante de Engenharia de Software, a aplicação dessas leis orienta o desenho de soluções paralelas, ajudando a decidir quando vale a pena paralelizar uma rotina e prever os ganhos reais com isso (Grama~\cite{parallelbook}).
+
+\section{Conclusão}
+
+As Leis de Amdahl e de Gustafson oferecem visões complementares sobre paralelismo. A primeira enfatiza os limites impostos pela parte sequencial, enquanto a segunda aposta na escalabilidade como solução. Ambas são indispensáveis na formação de engenheiros de software que lidam com sistemas concorrentes e distribuídos.
+
+A escolha entre uma ou outra abordagem deve levar em conta o contexto do problema, o ambiente computacional e a possibilidade de escalonamento da carga de trabalho.
+
+\begin{thebibliography}{99}
+
+\bibitem{amdahl1967}
+Amdahl, G. M. (1967). Validity of the single processor approach to achieving large scale computing capabilities. In *AFIPS Conference Proceedings*, vol. 30, pp. 483–485.
+
+\bibitem{gustafson1988}
+Gustafson, J. L. (1988). Reevaluating Amdahl's Law. *Communications of the ACM*, 31(5), 532–533.
+
+\bibitem{tanenbaum}
+Tanenbaum, A. S., \& Bos, H. (2014). *Modern Operating Systems*. Pearson Education.
+
+\bibitem{parallelbook}
+Grama, A., Gupta, A., Karypis, G., \& Kumar, V. (2003). *Introduction to Parallel Computing*. Addison-Wesley.
+
+\end{thebibliography}
+
+\end{document}
