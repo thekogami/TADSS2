@@ -1,0 +1,11 @@
+synchronized - aloca o objeto (mutex, só uma thread consegue entrar nele)
+    ver sobre park e unpark
+    ver sobre a funcao do sheduler
+    ver sobre parked thread (em java por exemplo)
+    ver diferenca sobre Preemptivo e Cooperativo
+    o tipo de thread selfish nao faz uso de yield
+    ver sobre Starvation: thread de baixa prioridade que nao consegue pegar CPU.
+    ver o que o Thread.Sleep faz e para que serve e ver como é a implementacao deste metodo
+
+    conteudos que o professor passou e que vao cair na prova: Leis de Amdahl e Gustafson, Introdução à Threads, Threads em Java, Exercício Threads e SpeedUp, Concorrência vs Paralelismo, Mutexes, Sincronização de Threads
+    (os ultimos assuntos sao os principais que vao cair, vale resaltar que a prova possivelmente vai ter uma analise de codigo, e o resto será escrito)
