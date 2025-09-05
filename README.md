@@ -94,16 +94,4 @@ Waiting: suspensa esperando sinal de outra thread.
 
 ---
 
-## 🔄 Ciclo de Vida de uma Thread
-
-```mermaid
-stateDiagram-v2
-    [*] --> New
-    New --> Runnable: start()
-    Runnable --> Running: scheduler escolhe
-    Running --> Runnable: yield() / preempção
-    Running --> Waiting: wait() / join()
-    Running --> Blocked: I/O ou lock
-    Waiting --> Runnable: notify() / unpark()
-    Blocked --> Runnable: recurso liberado
-    Running --> Terminated: execução concluída
+![Diagrama de Ciclo de Vida de uma Thread](diagrama%20thread.jpeg)
