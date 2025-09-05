@@ -93,5 +93,6 @@ Waiting: suspensa esperando sinal de outra thread.
 **A:** A thread cede a CPU imediatamente, mas pode ser reescalonada logo em seguida.  
 
 ---
+### Diagrama de Ciclo de Vida de uma Thread
 
 ![Diagrama de Ciclo de Vida de uma Thread](diagrama%20thread.jpeg)
